@@ -1,59 +1,8 @@
-#!/bin/bash
-
-PATH='/bin:/sbin:/usr/bin:/usr/sbin'
-
-APT_OPTS='-q -q -y'
-POSTGRESQL_VERSION='9.1'
-PUPPET_REPO='http://apt.puppetlabs.com/'
 DISTRIB_CODENAME=`awk -F= '/^DISTRIB_CODENAME/ { print $2 }' /etc/lsb-release`
-
-# Make apt-get install really quiet.
-export DEBIAN_FRONTEND=noninteractive
-
-if [ "`/usr/bin/id -u`" != "0" ]; then
-  echo "This script must be run as root" 1>&2
-  exit 1
-fi
-
-function add_puppet_repository()
-{
-  if [ ! -f /etc/apt/sources.list.d/puppet.list ]
-  then
-    echo "deb ${PUPPET_REPO} ${DISTRIB_CODENAME} main" > /etc/apt/sources.list.d/puppet.list
-    curl --silent ${PUPPET_REPO}/pubkey.gpg | apt-key add - > /dev/null
-    apt-get ${APT_OPTS} update
-  fi
-}
-
-function install_puppet()
-{
-  wget http://apt.puppetlabs.com/puppetlabs-release-${DISTRIB_CODENAME}.deb  >/dev/null 2>&1
-  dpkg -i puppetlabs-release-${DISTRIB_CODENAME}.deb  >/dev/null 2>&1
-  apt-get ${APT_OPTS} update
-  apt-get ${APT_OPTS} install puppet
-  cat > /etc/puppet/puppet.conf << EOF
-[agent]
-  report      = true
-  show_diff   = true
-  environment = production
-[main]
-  server      = puppetmaster
-  environment = production
-  confdir     = /etc/puppet
-  logdir      = /var/log/puppet
-  vardir      = /var/lib/puppet
-  ssldir      = /var/lib/puppet/ssl
-  rundir      = /var/run/puppet
-  factpath    = $vardir/lib/facter
-  templatedir = $confdir/templates
-EOF
-  cat > /etc/default/puppet << EOF
-# Defaults for puppet - sourced by /etc/init.d/puppet
-START=yes
-DAEMON_OPTS=""
-EOF
-  /etc/init.d/puppet start
-}
-
-add_puppet_repository
-install_puppet
+wget http://apt.puppetlabs.com/puppetlabs-release-${DISTRIB_CODENAME}.deb
+dpkg -i puppetlabs-release-${DISTRIB_CODENAME}.deb
+apt-get -y update && apt-get -y install puppet
+sed -i "10.128.174.119  master" /etc/hosts
+sed -i.bak s=\${yes}=/root/jdk=g /etc/default/puppet
+service puppet start
+puppet agent --test
