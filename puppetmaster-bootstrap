@@ -2,7 +2,7 @@ DISTRIB_CODENAME=`awk -F= '/^DISTRIB_CODENAME/ { print $2 }' /etc/lsb-release`
 wget http://apt.puppetlabs.com/puppetlabs-release-${DISTRIB_CODENAME}.deb
 dpkg -i puppetlabs-release-${DISTRIB_CODENAME}.deb
 apt-get -y update && apt-get -y install puppetmaster
-sed -i "10.128.174.96  puppet" /etc/hosts
+echo -e "10.128.174.96\tpuppet" >> /etc/hosts
 puppet module install puppetlabs-mysql
 wget https://github.com/figassis/puppetmaster-bootstrap/raw/master/site.pp
 mv site.pp /etc/puppet/manifests/site.pp

@@ -2,7 +2,7 @@ DISTRIB_CODENAME=`awk -F= '/^DISTRIB_CODENAME/ { print $2 }' /etc/lsb-release`
 wget http://apt.puppetlabs.com/puppetlabs-release-${DISTRIB_CODENAME}.deb
 dpkg -i puppetlabs-release-${DISTRIB_CODENAME}.deb
 apt-get -y update && apt-get -y install puppet
-sed -i "10.128.174.119  master" /etc/hosts
-sed -i.bak s=\${yes}=/root/jdk=g /etc/default/puppet
+echo -e "10.128.174.119\tmaster" >> /etc/hosts
+sudo sed -i 's/^START=no/START=yes/' /etc/default/puppet
 service puppet start
 puppet agent --test
