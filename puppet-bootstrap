@@ -4,5 +4,6 @@ dpkg -i puppetlabs-release-${DISTRIB_CODENAME}.deb
 apt-get -y update && apt-get -y install puppet
 echo -e "10.128.174.119\tmaster" >> /etc/hosts
 sudo sed -i 's/^START=no/START=yes/' /etc/default/puppet
+mv client.conf /etc/puppet/puppet.conf
 service puppet start
 puppet agent --test
