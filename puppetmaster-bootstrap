@@ -87,6 +87,9 @@ function install_rubygems()
 
 function install_puppetmaster()
 {
+
+  wget http://apt.puppetlabs.com/puppetlabs-release-${DISTRIB_CODENAME}.deb  >/dev/null 2>&1
+  dpkg -i puppetlabs-release-${DISTRIB_CODENAME}.deb  >/dev/null 2>&1
   apt-get ${APT_OPTS} update
   apt-get ${APT_OPTS} install puppet puppetmaster >/dev/null 2>&1
   if [ ${?} -ne 0 ]; then
