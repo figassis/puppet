@@ -5,3 +5,5 @@ apt-get -y update && apt-get -y install puppetmaster
 echo -e "10.128.174.96\tpuppet" >> /etc/hosts
 puppet module install puppetlabs-mysql
 mv site.pp /etc/puppet/manifests/site.pp
+mv master.conf /etc/puppet/puppet.conf
+#puppet cert --sign puppet
